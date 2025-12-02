@@ -288,3 +288,4 @@ name, ext = filename.rsplit('.', 1) if '.' in filename else (filename, '')
 
 **Дата анализа:** 2025-01-27
 
+

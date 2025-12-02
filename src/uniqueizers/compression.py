@@ -49,3 +49,4 @@ class CompressionUniqueizer(BaseUniqueizer):
         return save_image(img, "PNG", preserve_alpha=True)
 
 
+

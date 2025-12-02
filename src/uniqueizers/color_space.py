@@ -95,3 +95,4 @@ class ColorSpaceUniqueizer(BaseUniqueizer):
             
             return save_image(img, "JPEG", quality=95, exif_bytes=exif_bytes)
 
+

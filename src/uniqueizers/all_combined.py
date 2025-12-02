@@ -31,6 +31,17 @@ from .creator_tool import CreatorToolUniqueizer
 from .rating import RatingUniqueizer
 from .color_space import ColorSpaceUniqueizer
 from .exposure_time import ExposureTimeUniqueizer
+from .iso import ISOUUniqueizer
+from .focal_length import FocalLengthUniqueizer
+from .flash import FlashUniqueizer
+from .lens_model import LensModelUniqueizer
+from .metering_mode import MeteringModeUniqueizer
+from .exposure_mode import ExposureModeUniqueizer
+from .datetime_exif import DateTimeEXIFUniqueizer
+from .orientation import OrientationUniqueizer
+from .png_time import PNGTimeUniqueizer
+from .camera_make_model import CameraMakeModelUniqueizer
+from .subject_distance import SubjectDistanceUniqueizer
 
 
 class AllCombinedUniqueizer(BaseUniqueizer):
@@ -66,6 +77,17 @@ class AllCombinedUniqueizer(BaseUniqueizer):
         self.rating = RatingUniqueizer()
         self.color_space = ColorSpaceUniqueizer()
         self.exposure_time = ExposureTimeUniqueizer()
+        self.iso = ISOUUniqueizer()
+        self.focal_length = FocalLengthUniqueizer()
+        self.flash = FlashUniqueizer()
+        self.lens_model = LensModelUniqueizer()
+        self.metering_mode = MeteringModeUniqueizer()
+        self.exposure_mode = ExposureModeUniqueizer()
+        self.datetime_exif = DateTimeEXIFUniqueizer()
+        self.orientation = OrientationUniqueizer()
+        self.png_time = PNGTimeUniqueizer()
+        self.camera_make_model = CameraMakeModelUniqueizer()
+        self.subject_distance = SubjectDistanceUniqueizer()
 
     def process(self, image_bytes: bytes) -> bytes:
         """
@@ -126,10 +148,21 @@ class AllCombinedUniqueizer(BaseUniqueizer):
             ("rating", self.rating),
             ("color_space", self.color_space),
             ("exposure_time", self.exposure_time),
+            ("iso", self.iso),
+            ("focal_length", self.focal_length),
+            ("flash", self.flash),
+            ("lens_model", self.lens_model),
+            ("metering_mode", self.metering_mode),
+            ("exposure_mode", self.exposure_mode),
+            ("datetime_exif", self.datetime_exif),
+            ("orientation", self.orientation),
+            ("png_time", self.png_time),
+            ("camera_make_model", self.camera_make_model),
+            ("subject_distance", self.subject_distance),
         ]
         
-        # Apply random subset of modular methods (4-8 methods)
-        num_methods = random.randint(4, 8)
+        # Apply random subset of modular methods (6-12 methods from 23 total)
+        num_methods = random.randint(6, 12)
         selected_methods = random.sample(modular_methods, num_methods)
         
         for method_name, method_uniqueizer in selected_methods:

@@ -1,64 +1,70 @@
 # -*- coding: utf-8 -*-
 """
-Rating uniqueization: Changes image rating metadata.
+Metering Mode uniqueization: Changes metering mode in EXIF.
 
-Modifies Rating field in XMP/EXIF metadata
+Modifies MeteringMode field in EXIF metadata
 """
 
 from .base import BaseUniqueizer
 from src.utils.image import load_image, save_image
-from PIL import Image
-from PIL.PngImagePlugin import PngInfo
 import piexif
 import random
 
 
-class RatingUniqueizer(BaseUniqueizer):
+class MeteringModeUniqueizer(BaseUniqueizer):
     """
-    Uniqueizer that modifies Rating metadata.
+    Uniqueizer that modifies metering mode in EXIF.
     
-    Changes Rating field (0-5 stars) in metadata
+    Changes MeteringMode field in EXIF metadata
     """
+    
+    # Metering mode values (see EXIF spec)
+    METERING_MODES = {
+        0: "Unknown",
+        1: "Average",
+        2: "Center-weighted average",
+        3: "Spot",
+        4: "Multi-spot",
+        5: "Multi-segment",
+        6: "Partial",
+        255: "Other",
+    }
     
     def process(self, image_bytes: bytes) -> bytes:
         """
-        Process image by modifying Rating metadata.
+        Process image by modifying metering mode in EXIF.
         
         Args:
             image_bytes: Original image bytes
             
         Returns:
-            Processed image with modified Rating
+            Processed image with modified metering mode
         """
         img, original_format = load_image(image_bytes)
         
-        # Random rating: 0-5 stars
-        rating = random.randint(0, 5)
+        # Random metering mode
+        metering_mode = random.choice(list(self.METERING_MODES.keys()))
         
         if original_format.upper() == "PNG":
             # PNG metadata
+            from PIL.PngImagePlugin import PngInfo
             pnginfo = PngInfo()
-            pnginfo.add_text("Rating", str(rating))
-            pnginfo.add_text("XMP:Rating", str(rating))
+            pnginfo.add_text("MeteringMode", str(metering_mode))
+            pnginfo.add_text("MeteringModeDesc", self.METERING_MODES[metering_mode])
             
-            # Save PNG with metadata
             if img.mode not in ("RGB", "RGBA"):
                 img = img.convert("RGBA")
             
             return save_image(img, "PNG", preserve_alpha=True)
         else:
-            # JPEG EXIF - Rating in EXIF
+            # JPEG EXIF
             if img.mode != "RGB":
                 img = img.convert("RGB")
             
             try:
-                # Rating is typically stored in UserComment or ImageDescription
                 exif_dict = {
-                    "0th": {
-                        piexif.ImageIFD.ImageDescription: f"Rating: {rating}".encode('utf-8'),
-                    },
                     "Exif": {
-                        piexif.ExifIFD.UserComment: f"Rating:{rating}".encode('utf-8'),
+                        piexif.ExifIFD.MeteringMode: metering_mode,
                     }
                 }
                 exif_bytes = piexif.dump(exif_dict)
@@ -67,5 +73,4 @@ class RatingUniqueizer(BaseUniqueizer):
                 exif_bytes = generate_random_metadata()
             
             return save_image(img, "JPEG", quality=95, exif_bytes=exif_bytes)
-
 

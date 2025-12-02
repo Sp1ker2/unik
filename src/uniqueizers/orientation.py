@@ -1,64 +1,67 @@
 # -*- coding: utf-8 -*-
 """
-Rating uniqueization: Changes image rating metadata.
+Orientation uniqueization: Changes image orientation in EXIF.
 
-Modifies Rating field in XMP/EXIF metadata
+Modifies Orientation field in EXIF metadata
 """
 
 from .base import BaseUniqueizer
 from src.utils.image import load_image, save_image
-from PIL import Image
-from PIL.PngImagePlugin import PngInfo
 import piexif
 import random
 
 
-class RatingUniqueizer(BaseUniqueizer):
+class OrientationUniqueizer(BaseUniqueizer):
     """
-    Uniqueizer that modifies Rating metadata.
+    Uniqueizer that modifies image orientation in EXIF.
     
-    Changes Rating field (0-5 stars) in metadata
+    Changes Orientation field in EXIF metadata
     """
+    
+    # Orientation values (see EXIF spec)
+    ORIENTATIONS = {
+        1: "Normal (0°)",
+        3: "Upside down (180°)",
+        6: "Rotated 90° CCW",
+        8: "Rotated 90° CW",
+    }
     
     def process(self, image_bytes: bytes) -> bytes:
         """
-        Process image by modifying Rating metadata.
+        Process image by modifying orientation in EXIF.
+        
+        Note: This only changes metadata, not the actual image rotation.
         
         Args:
             image_bytes: Original image bytes
             
         Returns:
-            Processed image with modified Rating
+            Processed image with modified orientation metadata
         """
         img, original_format = load_image(image_bytes)
         
-        # Random rating: 0-5 stars
-        rating = random.randint(0, 5)
+        # Random orientation
+        orientation = random.choice(list(self.ORIENTATIONS.keys()))
         
         if original_format.upper() == "PNG":
             # PNG metadata
+            from PIL.PngImagePlugin import PngInfo
             pnginfo = PngInfo()
-            pnginfo.add_text("Rating", str(rating))
-            pnginfo.add_text("XMP:Rating", str(rating))
+            pnginfo.add_text("Orientation", str(orientation))
             
-            # Save PNG with metadata
             if img.mode not in ("RGB", "RGBA"):
                 img = img.convert("RGBA")
             
             return save_image(img, "PNG", preserve_alpha=True)
         else:
-            # JPEG EXIF - Rating in EXIF
+            # JPEG EXIF
             if img.mode != "RGB":
                 img = img.convert("RGB")
             
             try:
-                # Rating is typically stored in UserComment or ImageDescription
                 exif_dict = {
                     "0th": {
-                        piexif.ImageIFD.ImageDescription: f"Rating: {rating}".encode('utf-8'),
-                    },
-                    "Exif": {
-                        piexif.ExifIFD.UserComment: f"Rating:{rating}".encode('utf-8'),
+                        piexif.ImageIFD.Orientation: orientation,
                     }
                 }
                 exif_bytes = piexif.dump(exif_dict)
@@ -67,5 +70,4 @@ class RatingUniqueizer(BaseUniqueizer):
                 exif_bytes = generate_random_metadata()
             
             return save_image(img, "JPEG", quality=95, exif_bytes=exif_bytes)
-
 

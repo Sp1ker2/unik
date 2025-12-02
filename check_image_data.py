@@ -107,3 +107,4 @@ if __name__ == "__main__":
         print("  for file in *.jpg; do python check_image_data.py \"$file\"; done")
 
 
+

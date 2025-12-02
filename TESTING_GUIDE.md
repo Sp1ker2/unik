@@ -198,3 +198,4 @@ python -c "from PIL import Image; img = Image.open('image.jpg'); print(img.info)
 - ✅ Каждый файл **визуально похож**, но **технически уникален**
 
 
+

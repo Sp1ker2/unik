@@ -1,64 +1,65 @@
 # -*- coding: utf-8 -*-
 """
-Rating uniqueization: Changes image rating metadata.
+ISO uniqueization: Changes ISO speed ratings in EXIF.
 
-Modifies Rating field in XMP/EXIF metadata
+Modifies ISO speed ratings in EXIF metadata
 """
 
 from .base import BaseUniqueizer
 from src.utils.image import load_image, save_image
-from PIL import Image
-from PIL.PngImagePlugin import PngInfo
 import piexif
 import random
 
 
-class RatingUniqueizer(BaseUniqueizer):
+class ISOUUniqueizer(BaseUniqueizer):
     """
-    Uniqueizer that modifies Rating metadata.
+    Uniqueizer that modifies ISO speed ratings in EXIF.
     
-    Changes Rating field (0-5 stars) in metadata
+    Changes ISO value in EXIF metadata
     """
+    
+    # Common ISO values
+    ISO_VALUES = [
+        50, 64, 80, 100, 125, 160, 200, 250, 320, 400,
+        500, 640, 800, 1000, 1250, 1600, 2000, 2500,
+        3200, 4000, 5000, 6400, 8000, 10000, 12800,
+        16000, 20000, 25600, 32000, 40000, 51200
+    ]
     
     def process(self, image_bytes: bytes) -> bytes:
         """
-        Process image by modifying Rating metadata.
+        Process image by modifying ISO in EXIF.
         
         Args:
             image_bytes: Original image bytes
             
         Returns:
-            Processed image with modified Rating
+            Processed image with modified ISO
         """
         img, original_format = load_image(image_bytes)
         
-        # Random rating: 0-5 stars
-        rating = random.randint(0, 5)
+        # Random ISO value
+        iso = random.choice(self.ISO_VALUES)
         
         if original_format.upper() == "PNG":
-            # PNG metadata
+            # PNG doesn't support EXIF directly, but we can add it as metadata
+            from PIL.PngImagePlugin import PngInfo
             pnginfo = PngInfo()
-            pnginfo.add_text("Rating", str(rating))
-            pnginfo.add_text("XMP:Rating", str(rating))
+            pnginfo.add_text("ISO", str(iso))
             
-            # Save PNG with metadata
             if img.mode not in ("RGB", "RGBA"):
                 img = img.convert("RGBA")
             
             return save_image(img, "PNG", preserve_alpha=True)
         else:
-            # JPEG EXIF - Rating in EXIF
+            # JPEG EXIF
             if img.mode != "RGB":
                 img = img.convert("RGB")
             
             try:
-                # Rating is typically stored in UserComment or ImageDescription
                 exif_dict = {
-                    "0th": {
-                        piexif.ImageIFD.ImageDescription: f"Rating: {rating}".encode('utf-8'),
-                    },
                     "Exif": {
-                        piexif.ExifIFD.UserComment: f"Rating:{rating}".encode('utf-8'),
+                        piexif.ExifIFD.ISOSpeedRatings: iso,
                     }
                 }
                 exif_bytes = piexif.dump(exif_dict)
@@ -67,5 +68,4 @@ class RatingUniqueizer(BaseUniqueizer):
                 exif_bytes = generate_random_metadata()
             
             return save_image(img, "JPEG", quality=95, exif_bytes=exif_bytes)
-
 

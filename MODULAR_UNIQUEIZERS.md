@@ -124,6 +124,52 @@
   - 1/8, 1/4, 1/2, 1 sec
   - 2, 4, 8, 15, 30 sec
 
+### 13-23. Дополнительные Модули ✨ NEW
+
+#### 13. ISOUUniqueizer
+**Файл:** `src/uniqueizers/iso.py`
+- ISO: 50-51200 (31 значений)
+
+#### 14. FocalLengthUniqueizer
+**Файл:** `src/uniqueizers/focal_length.py`
+- FocalLength: 14-800mm (26 значений)
+
+#### 15. FlashUniqueizer
+**Файл:** `src/uniqueizers/flash.py`
+- Flash: 12 различных режимов вспышки
+
+#### 16. LensModelUniqueizer
+**Файл:** `src/uniqueizers/lens_model.py`
+- LensModel: 21 популярная модель объектива
+
+#### 17. MeteringModeUniqueizer
+**Файл:** `src/uniqueizers/metering_mode.py`
+- MeteringMode: 8 режимов экспозамера
+
+#### 18. ExposureModeUniqueizer
+**Файл:** `src/uniqueizers/exposure_mode.py`
+- ExposureMode: Auto/Manual/Auto bracket
+
+#### 19. DateTimeEXIFUniqueizer
+**Файл:** `src/uniqueizers/datetime_exif.py`
+- DateTime: случайная дата/время за последние 2 года
+
+#### 20. OrientationUniqueizer
+**Файл:** `src/uniqueizers/orientation.py`
+- Orientation: 4 варианта ориентации (Normal, 180°, 90° CW/CCW)
+
+#### 21. PNGTimeUniqueizer
+**Файл:** `src/uniqueizers/png_time.py`
+- PNG tIME chunk: время модификации PNG файла
+
+#### 22. CameraMakeModelUniqueizer
+**Файл:** `src/uniqueizers/camera_make_model.py`
+- Make/Model: 30 популярных камер (Canon, Nikon, Sony, iPhone и др.)
+
+#### 23. SubjectDistanceUniqueizer
+**Файл:** `src/uniqueizers/subject_distance.py`
+- SubjectDistance: расстояние до объекта (0.01m - 1000m)
+
 ## Как Работает AllCombinedUniqueizer
 
 `AllCombinedUniqueizer` применяет все методы последовательно:
@@ -138,9 +184,9 @@
 ### Модульные Методы в AllCombined
 
 При каждом вызове `AllCombinedUniqueizer.process()`:
-- Выбираются **случайные 4-8 методов** из 12 доступных
+- Выбираются **случайные 6-12 методов** из 23 доступных
 - Методы применяются в случайном порядке
-- Это обеспечивает дополнительную уникальность каждой копии
+- Это обеспечивает максимальную уникальность каждой копии
 
 ## AllCombinedWithPixelUniqueizer
 
@@ -208,6 +254,16 @@ with open('output.jpg', 'wb') as f:
 - Rating: 0-5
 - ColorSpace: sRGB/Adobe RGB/и т.д.
 - ExposureTime: 1/8000 - 30 sec
+- ISO: 50-51200
+- FocalLength: 14-800mm
+- Flash: 12 режимов
+- LensModel: 21 модель
+- MeteringMode: 8 режимов
+- ExposureMode: Auto/Manual/Auto bracket
+- DateTime: случайная дата за 2 года
+- Orientation: 4 варианта
+- Camera Make/Model: 30 камер
+- SubjectDistance: 0.01-1000m
 
 ## Производительность
 

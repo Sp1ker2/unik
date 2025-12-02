@@ -25,6 +25,17 @@ from .creator_tool import CreatorToolUniqueizer
 from .rating import RatingUniqueizer
 from .color_space import ColorSpaceUniqueizer
 from .exposure_time import ExposureTimeUniqueizer
+from .iso import ISOUUniqueizer
+from .focal_length import FocalLengthUniqueizer
+from .flash import FlashUniqueizer
+from .lens_model import LensModelUniqueizer
+from .metering_mode import MeteringModeUniqueizer
+from .exposure_mode import ExposureModeUniqueizer
+from .datetime_exif import DateTimeEXIFUniqueizer
+from .orientation import OrientationUniqueizer
+from .png_time import PNGTimeUniqueizer
+from .camera_make_model import CameraMakeModelUniqueizer
+from .subject_distance import SubjectDistanceUniqueizer
 
 
 class AllCombinedWithPixelUniqueizer(BaseUniqueizer):
