@@ -137,3 +137,4 @@ Write-Host "  - MinIO Console: http://localhost:9001 (minioadmin/minioadmin)" -F
 Write-Host "  - Postgres: localhost:5432" -ForegroundColor White
 Write-Host "  - Redis: localhost:6379" -ForegroundColor White
 
+

@@ -59,7 +59,11 @@ async def get_session_for_phone(phone_number: str, api_id: str, api_hash: str):
                 "api_hash": api_hash  # ОДИН для всех
             }
             
-            filename = f"session_{me.id}.json"
+            # Сохранить в local-storage/sessions/
+            sessions_dir = Path('local-storage/sessions')
+            sessions_dir.mkdir(parents=True, exist_ok=True)
+            
+            filename = sessions_dir / f"session_{me.id}.json"
             with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(session_data, f, indent=2, ensure_ascii=False)
             
@@ -173,4 +177,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 

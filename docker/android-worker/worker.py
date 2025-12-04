@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
 Android Worker для выполнения Telegram warm-up задач
+Поддерживает локальное хранение сессий
 """
 
 import os
@@ -41,12 +42,26 @@ class AndroidWorker:
         self.control_api_url = os.getenv('CONTROL_API_URL', 'http://control-node:8000')
         self.control_api_token = os.getenv('CONTROL_API_TOKEN')
         self.session_path = Path(os.getenv('SESSION_STORAGE_PATH', '/data/sessions'))
+        self.local_sessions_path = Path('local-storage/sessions')  # Локальное хранение
         self.client: Optional[TelegramClient] = None
         
         if not self.phone_number:
             raise ValueError("PHONE_NUMBER environment variable is required")
         if not self.account_id:
             raise ValueError("ACCOUNT_ID environment variable is required")
+    
+    async def load_session_local(self):
+        """Загрузить session из локальной папки (приоритет)"""
+        try:
+            local_file = self.local_sessions_path / f"{self.account_id}.json"
+            if local_file.exists():
+                with open(local_file, 'r', encoding='utf-8') as f:
+                    session_data = json.load(f)
+                logger.info(f"Session loaded from local storage for account {self.account_id}")
+                return session_data
+        except Exception as e:
+            logger.warning(f"Failed to load local session: {e}")
+        return None
     
     async def load_session_from_s3(self):
         """Загрузка session из S3/MinIO"""
@@ -85,12 +100,15 @@ class AndroidWorker:
         """Инициализация Telegram клиента"""
         logger.info(f"Initializing client for account {self.account_id}")
         
-        # Попытаться загрузить session из S3
-        session_data = await self.load_session_from_s3()
+        # 1. Попытаться загрузить из локальной папки (приоритет)
+        session_data = await self.load_session_local()
+        
+        # 2. Если нет локально, попробовать S3
+        if not session_data:
+            session_data = await self.load_session_from_s3()
         
         if session_data:
-            # Использовать StringSession из S3
-            from telethon.sessions import StringSession
+            # Использовать StringSession
             session_string = session_data.get('session_string')
             api_id = session_data.get('api_id') or os.getenv('TELEGRAM_API_ID', '')
             api_hash = session_data.get('api_hash') or os.getenv('TELEGRAM_API_HASH', '')
@@ -102,10 +120,10 @@ class AndroidWorker:
                     api_hash=api_hash
                 )
                 await self.client.start()
-                logger.info("Client initialized from S3 session")
+                logger.info("Client initialized from session")
                 return
         
-        # Fallback: использовать локальный файл
+        # Fallback: использовать локальный файл .session
         session_file = self.session_path / f"{self.account_id}.session"
         api_id = os.getenv('TELEGRAM_API_ID', '')
         api_hash = os.getenv('TELEGRAM_API_HASH', '')
@@ -231,4 +249,3 @@ async def main():
 
 if __name__ == '__main__':
     asyncio.run(main())
-

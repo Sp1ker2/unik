@@ -66,3 +66,4 @@ echo ""
 echo "To verify:"
 echo "  kubectl get secrets -n $NAMESPACE"
 
+

@@ -82,3 +82,4 @@ kubectl delete jobs -n $NAMESPACE -l job-name=test-job --ignore-not-found=true
 echo ""
 echo "🎉 Smoke tests completed!"
 
+

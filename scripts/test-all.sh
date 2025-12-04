@@ -30,7 +30,7 @@ check_service() {
 # 1. Проверка Docker контейнеров
 echo "📦 Проверка Docker контейнеров:"
 check_service "Postgres" "docker exec bip-postgres-1 pg_isready -U telegram_farm"
-check_service "Redis" "docker exec bip-redis-1 redis-cli ping"
+check_service "Redis" "docker exec bip- redis-1 redis-cli ping"
 check_service "MinIO" "docker exec bip-minio-1 curl -f http://localhost:9000/minio/health/live"
 
 # 2. Проверка Control API
@@ -112,4 +112,5 @@ echo "  - Control API: http://localhost:8000"
 echo "  - MinIO Console: http://localhost:9001 (minioadmin/minioadmin)"
 echo "  - Postgres: localhost:5432"
 echo "  - Redis: localhost:6379"
+
 

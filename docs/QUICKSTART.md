@@ -143,3 +143,4 @@ kubectl top pods -n telegram-farm
 
 См. [DEPLOYMENT.md](DEPLOYMENT.md) для детальной информации.
 
+

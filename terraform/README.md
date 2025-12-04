@@ -64,3 +64,4 @@ terraform apply
 - Public IPs
 - Инструкции по следующим шагам
 
+

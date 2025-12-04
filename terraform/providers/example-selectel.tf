@@ -65,3 +65,4 @@ output "cluster_id" {
   value = selectel_vpc_k8s_cluster_v1.main.id
 }
 
+

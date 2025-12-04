@@ -57,8 +57,8 @@ def main():
             print(f"📦 Создание bucket: {s3_bucket}")
             client.make_bucket(s3_bucket)
         
-        # Найти все session файлы
-        session_files = glob("session_*.json")
+        # Найти все session файлы (локально и в local-storage)
+        session_files = glob("session_*.json") + glob("local-storage/sessions/session_*.json")
         
         if not session_files:
             print("❌ Не найдено session файлов (session_*.json)")
@@ -93,4 +93,5 @@ if __name__ == '__main__':
         pass
     
     main()
+
 

@@ -61,8 +61,11 @@ async def get_session():
             "api_hash": api_hash
         }
         
-        # Сохранить в файл
-        filename = f"session_{me.id}.json"
+        # Сохранить в local-storage/sessions/
+        sessions_dir = Path('local-storage/sessions')
+        sessions_dir.mkdir(parents=True, exist_ok=True)
+        
+        filename = sessions_dir / f"session_{me.id}.json"
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(session_data, f, indent=2, ensure_ascii=False)
         
@@ -95,4 +98,5 @@ if __name__ == '__main__':
         pass
     
     asyncio.run(get_session())
+
 

@@ -29,3 +29,4 @@ if __name__ == '__main__':
     print(f"\nТеперь запустите:")
     print(f"  python scripts/batch-get-sessions.py accounts.txt")
 
+

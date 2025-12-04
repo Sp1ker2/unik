@@ -188,3 +188,4 @@ redis.createClient({ host: 'localhost', port: 6379 })
 - Для веб-интерфейса используйте Redis Commander или RedisInsight
 - Подключение из приложений: `localhost:6379` (TCP)
 
+

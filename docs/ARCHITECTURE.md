@@ -258,3 +258,4 @@ Control Node Pods
 - Batch processing для отчетов
 - CDN для статических ресурсов UI
 
+

@@ -15,6 +15,16 @@ secrets/
 *.secret
 .env
 .env.local
+.env.*.local
+
+# Session files
+session_*.json
+accounts.txt
+*.session
+
+# Local storage
+local-storage/sessions/
+local-storage/phones/accounts.txt
 
 # Docker
 *.log
@@ -45,4 +55,5 @@ ENV/
 dist/
 build/
 *.egg-info/
+
 
